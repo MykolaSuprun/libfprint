@@ -80,10 +80,20 @@
  * touches, 1 in 80 against 12 and 1 in 170 against 16. */
 #define ELANPRESS_ENROLL_STAGES 12
 
-/* time between detecting the finger and imaging it. The first frames catch it
- * still landing, with only part of it in contact; from about 100 ms on the
- * image is as good as any later one. */
-#define ELANPRESS_SETTLE_MS 200
+/* time between detecting the finger and imaging it during enrollment.
+ * The template these captures build is matched against many presses
+ * later, so it earns the extra care: enrollment captures taken 100 ms
+ * after landing decayed the template invisibly (measured on 0c3d;
+ * matches then clustered on 2-3 of 12 images while every stage passed
+ * the quality gate). */
+#define ELANPRESS_SETTLE_ENROLL_MS 200
+
+/* time between detecting the finger and imaging it during verify and
+ * identify. Presses imaged 100 ms after landing match a healthy
+ * template as well as later ones do (measured); only badly-landed
+ * presses come in below threshold, and settling longer does not
+ * rescue those. */
+#define ELANPRESS_SETTLE_MS 100
 
 /* separate presses averaged into one verify/identify decision.
  *

@@ -394,11 +394,21 @@ capture_run_state (FpiSsm *ssm, FpDevice *dev)
           if (!self->settled)
             {
               /* the finger has just landed: let it be repositioned before
-               * capturing anything that will be matched */
+               * capturing anything that will be matched.  Enrollment
+               * builds the template every later press is matched
+               * against, so it is given the longer settle. */
+              const FpiDeviceAction action =
+                fpi_device_get_current_action (dev);
+              const int settle_ms =
+                (action == FPI_DEVICE_ACTION_ENROLL)
+                  ? ELANPRESS_SETTLE_ENROLL_MS
+                  : ELANPRESS_SETTLE_MS;
+              fp_dbg ("settle delay %d ms for action %d", settle_ms,
+                      action);
               self->settled = TRUE;
               g_clear_pointer (&self->last_frame, g_free);
               fpi_ssm_jump_to_state_delayed (ssm, CAPTURE_POLL_REQUEST,
-                                             ELANPRESS_SETTLE_MS);
+                                             settle_ms);
               break;
             }
 
