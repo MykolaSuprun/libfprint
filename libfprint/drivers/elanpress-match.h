@@ -81,10 +81,16 @@ typedef struct
 
 /* a processed touch whose contrast (pixel std-dev) falls below this carries
  * too little ridge detail to enroll or to match against: a light or partial
- * press correlates poorly against everything, genuine or not. A well-imaged
- * press lands around 30-50. Rejecting these is what makes a bad press fail
- * rather than score like a stranger's finger. */
-#define ELANPRESS_MIN_QUALITY_STDDEV 10.0
+ * press correlates poorly against everything, genuine or not. Rejecting
+ * these is what makes a bad press fail rather than score like a stranger's
+ * finger.
+ *
+ * Measured on 04f3:0c3d: solid flat presses land at 48-58 std-dev and
+ * match; light partial contacts land at 42-48 and score 0-3 pairs
+ * against every template, at either settle; nothing was ever observed
+ * in between. The gate sits in that empty band, so a light press
+ * becomes a press-again retry, never a verdict. */
+#define ELANPRESS_MIN_QUALITY_STDDEV 48.0
 
 void     elanpress_rotate_frame (const guint8 *raw, unsigned short *out,
                                  int w, int h);
